@@ -29,6 +29,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const QuillQuestCollections = client.db('QuillQuestDB').collection('Services')
+    const QQBookingCollections = client.db('QuillQuestDB').collection('Booking')
     app.post('/allServices' , async(req , res)=>{
         const allData = req.body
         const result = await QuillQuestCollections.insertOne(allData)
@@ -37,6 +38,11 @@ async function run() {
     app.get('/allServices' , async(req , res)=>{
         const result = await QuillQuestCollections.find().toArray()
         res.send(result)
+    })
+    app.post('/allBookings' , async(req , res)=> {
+      const bookingData = req.body
+      const result = await QQBookingCollections.insertOne(bookingData)
+      res.send(result)
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
