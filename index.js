@@ -36,7 +36,13 @@ async function run() {
         res.send(result)
     })
     app.get('/allServices' , async(req , res)=>{
-        const result = await QuillQuestCollections.find().toArray()
+      console.log(req.query.UserEmail)
+      let query = {}
+      if(req.query?.UserEmail){
+        query = { UserEmail : req.query.UserEmail }
+      }
+      
+        const result = await QuillQuestCollections.find(query).toArray()
         res.send(result)
     })
     app.post('/allBookings' , async(req , res)=> {
