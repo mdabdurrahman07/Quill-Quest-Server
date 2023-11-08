@@ -12,7 +12,7 @@ app.use(cors())
 // xQizoeK1Y8b1AWD6
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.abtiefd.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -35,6 +35,7 @@ async function run() {
         const result = await QuillQuestCollections.insertOne(allData)
         res.send(result)
     })
+    // getting data with query params
     app.get('/allServices' , async(req , res)=>{
       console.log(req.query.UserEmail)
       let query = {}
@@ -45,6 +46,36 @@ async function run() {
         const result = await QuillQuestCollections.find(query).toArray()
         res.send(result)
     })
+    // deleting  Services Data
+    app.delete('/allServices/:id', async (req , res) =>{
+      const id = req.params.id
+      const query = {_id : new ObjectId(id)}
+      const result = await QuillQuestCollections.deleteOne(query)
+      res.send(result)
+    })
+    // updating  Services Data
+
+    app.put('/allServices/:id' , async (req , res)=> {
+      const id = req.params.id
+      const info =  req.body
+      const filter = {_id : new ObjectId(id)}
+      const options = { upsert: true };
+      const UpdatedInfo = {
+        $set: {
+          UserName : info.UserName ,
+           UserEmail : info.UserEmail,
+            servicePrice : info.servicePrice,
+            ServiceDesc : info.ServiceDesc ,
+             serviceName : info.serviceName , 
+             serviceArea : info.serviceArea,
+              serviceUrl : info.serviceUrl,
+               UserPhoto : info.UserPhoto
+        }
+      }
+      const result = await QuillQuestCollections.updateOne(filter , UpdatedInfo , options)
+      res.send(result)
+    })
+    // getting all Bookings data
     app.post('/allBookings' , async(req , res)=> {
       const bookingData = req.body
       const result = await QQBookingCollections.insertOne(bookingData)
