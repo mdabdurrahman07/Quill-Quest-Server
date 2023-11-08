@@ -6,10 +6,14 @@ const port = process.env.PORT || 5000
 
 // middleware 
 app.use(express.json())
-app.use(cors())
+const corsConfig = {
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+  app.use(cors(corsConfig))
 
-// quillQuestServer
-// xQizoeK1Y8b1AWD6
+
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -75,11 +79,22 @@ async function run() {
       const result = await QuillQuestCollections.updateOne(filter , UpdatedInfo , options)
       res.send(result)
     })
-    // getting all Bookings data
+    // posting all Bookings data
     app.post('/allBookings' , async(req , res)=> {
       const bookingData = req.body
       const result = await QQBookingCollections.insertOne(bookingData)
       res.send(result)
+    })
+    // getting all Bookings data 
+    app.get('/allBookings' , async(req , res)=>{
+      console.log(req.query.BookingUserEmail)
+      let query = {}
+      if(req.query?.BookingUserEmail){
+        query = { BookingUserEmail : req.query.BookingUserEmail}
+      }
+      
+        const result = await QQBookingCollections.find(query).toArray()
+        res.send(result)
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
